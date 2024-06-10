@@ -1,3 +1,7 @@
+/*This line fixes https://github.com/rustwasm/wasm-bindgen/issues/2357 this issue. it can also be fixed by adding edition=2018 to cargo.toml under the package declaration,
+but I prefer this solution */
+extern crate wasm_bindgen;
+
 mod utils;
 
 use wasm_bindgen::prelude::*;
