@@ -1,0 +1,30 @@
+# Ignore build artifacts
+/target/
+**/*.rs.bk
+
+# Ignore these files and directories in www
+/www/node_modules
+/www/dist/
+/www/.bin/
+/www/*.log
+/www/*.tmp
+/www/*.bak
+
+# Ignore npm and yarn files
+/node_modules/
+/yarn.lock
+
+# Ignore IDE stuff
+.idea/
+/.vscode/
+/*.code-workspace
+
+# Ignroe OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore generated files and directories
+bin/
+pkg/
+*.wasm
+*.log
