@@ -32,7 +32,7 @@ wasm-pack test --headless --firefox
 
 ## Known Issues
 - If the error in the image below occurs when running `npm run start` on MacOS, it can be fixed by running 
-  `export NODE_OPTIONS=--openssl-legacy-provider` to fix it.
+  `export NODE_OPTIONS=--openssl-legacy-provider`.
   ![ssl issue image](error.png).
 
 ## 🔋 Batteries Included
