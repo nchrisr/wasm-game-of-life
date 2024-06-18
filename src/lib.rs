@@ -89,6 +89,15 @@ impl Universe {
         self.cells.as_ptr()
     }
 
+    /// Set cells to be alive in a universe by passing the row and column
+    /// of each cell as an array.
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx = self.get_index(row, col);
+            self.cells[idx] = Cell::Alive;
+        }
+    }
+
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
