@@ -89,13 +89,6 @@ impl Universe {
         self.cells.as_ptr()
     }
 
-    /*pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
-        for (row, col) in cells.iter().cloned() {
-            let idx = self.get_index(row, col);
-            self.cells[idx] = Cell::Alive;
-        }
-    }*/
-
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
