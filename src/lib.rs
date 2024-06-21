@@ -1,11 +1,15 @@
 /*This line fixes https://github.com/rustwasm/wasm-bindgen/issues/2357 this issue. it can also be fixed by adding edition=2018 to cargo.toml under the package declaration,
 but I prefer this solution */
 extern crate wasm_bindgen;
+extern crate js_sys;
+extern crate web_sys;
 
 mod utils;
 
 use wasm_bindgen::prelude::*;
 use std::fmt;
+use js_sys::Math;
+use web_sys::console;
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -13,6 +17,15 @@ use std::fmt;
 pub enum Cell {
     Dead = 0,
     Alive = 1,
+}
+
+#[wasm_bindgen]
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum InitialState {
+    Random = 0,
+    SingleShip = 1,
+    ModeTwoSeven = 2,
 }
 
 #[wasm_bindgen]
@@ -48,17 +61,48 @@ impl Universe {
 
 #[wasm_bindgen]
 impl Universe {
-    pub fn new() -> Universe{
-        let width = 64;
-        let height = 64;
+    pub fn new(initial_state: InitialState) -> Universe{
+        let width : u32 = 64;
+        let height : u32 = 64;
 
-        let cells = (0..width * height).map(|i| {
-            if i % 2 == 0 || i % 7 == 0{
-                Cell::Alive
-            }else {
-                Cell::Dead
+        let cells = match initial_state {
+            InitialState::Random => {
+
+                (0..width * height).map(|i| {
+                    if Math::random() < 0.5{
+                        Cell::Dead
+                    }else{
+                        Cell::Alive
+                    }
+                }).collect()
+            },
+
+            InitialState::SingleShip => {
+                let max_loc = (width * height) as f64;
+                let random_num = (Math::random() * max_loc).floor() as u32;
+                console::log_1(&format!("Ramdom number = {}", random_num).into());
+
+                (0..width * height).map(|i| {
+                    if random_num == i{
+                        console::log_1(&format!("Found cell that will be alive  random num: {}= {}", random_num, i).into());
+                        Cell::Alive
+                    }else{
+                        Cell::Dead
+                    }
+                }).collect()
+            },
+
+            InitialState::ModeTwoSeven => {
+                (0..width * height).map(|i| {
+                    if i % 2 == 0 || i % 7 == 0{
+                        Cell::Alive
+                    }else {
+                        Cell::Dead
+                    }
+                }).collect()
             }
-        }).collect();
+
+        };
 
         Universe{
             width,
@@ -91,12 +135,12 @@ impl Universe {
 
     /// Set cells to be alive in a universe by passing the row and column
     /// of each cell as an array.
-    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+    /*pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
         for (row, col) in cells.iter().cloned() {
             let idx = self.get_index(row, col);
             self.cells[idx] = Cell::Alive;
         }
-    }
+    }*/
 
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
