@@ -9,6 +9,7 @@ mod utils;
 use wasm_bindgen::prelude::*;
 use std::fmt;
 use js_sys::Math;
+use std::collections::HashSet;
 use web_sys::console;
 
 #[wasm_bindgen]
@@ -68,7 +69,7 @@ impl Universe {
         let cells = match initial_state {
             InitialState::Random => {
 
-                (0..width * height).map(|i| {
+                (0..width * height).map(|_i| {
                     if Math::random() < 0.5{
                         Cell::Dead
                     }else{
@@ -82,9 +83,29 @@ impl Universe {
                 let random_num = (Math::random() * max_loc).floor() as u32;
                 console::log_1(&format!("Ramdom number = {}", random_num).into());
 
+                // Calculate x and y position from random_num
+                let tip_x = random_num % width;
+                let tip_y = random_num / width;
+
+                console::log_1(&format!("Tip position: ({}, {})", tip_x, tip_y).into());
+
+                // Glider pattern
+                let glider_pattern = [
+                    (tip_x, tip_y),
+                    ((tip_x + 1) % width, (tip_y + 1) % height),
+                    ((tip_x + 2) % width, tip_y % height),
+                    ((tip_x + 2) % width, (tip_y + 1) % height),
+                    ((tip_x + 2) % width, (tip_y + 2) % height),
+                ];
+
+                // Use a HashSet for O(1) average time complexity lookups
+                let glider_set: HashSet<_> = glider_pattern.iter().cloned().collect();
+
                 (0..width * height).map(|i| {
-                    if random_num == i{
-                        console::log_1(&format!("Found cell that will be alive  random num: {}= {}", random_num, i).into());
+                    let x = i % width;
+                    let y = i /width;
+
+                    if glider_set.contains(&(x, y)){
                         Cell::Alive
                     }else{
                         Cell::Dead
