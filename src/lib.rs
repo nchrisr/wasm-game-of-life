@@ -26,7 +26,7 @@ pub enum Cell {
 pub enum InitialState {
     Random = 0,
     SingleShip = 1,
-    ModeTwoSeven = 2,
+    ModTwoSeven = 2,
 }
 
 #[wasm_bindgen]
@@ -81,7 +81,7 @@ impl Universe {
             InitialState::SingleShip => {
                 let max_loc = (width * height) as f64;
                 let random_num = (Math::random() * max_loc).floor() as u32;
-                console::log_1(&format!("Ramdom number = {}", random_num).into());
+                console::log_1(&format!("Random number = {}", random_num).into());
 
                 // Calculate x and y position from random_num
                 let tip_x = random_num % width;
@@ -113,7 +113,7 @@ impl Universe {
                 }).collect()
             },
 
-            InitialState::ModeTwoSeven => {
+            InitialState::ModTwoSeven => {
                 (0..width * height).map(|i| {
                     if i % 2 == 0 || i % 7 == 0{
                         Cell::Alive
@@ -153,15 +153,6 @@ impl Universe {
     pub fn get_cells(&self) -> *const Cell {
         self.cells.as_ptr()
     }
-
-    /// Set cells to be alive in a universe by passing the row and column
-    /// of each cell as an array.
-    /*pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
-        for (row, col) in cells.iter().cloned() {
-            let idx = self.get_index(row, col);
-            self.cells[idx] = Cell::Alive;
-        }
-    }*/
 
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
