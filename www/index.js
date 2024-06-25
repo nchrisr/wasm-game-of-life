@@ -49,7 +49,7 @@ const getIndex = (row, column) => {
 };
 
 const drawCells = () => {
-    const cellsPtr = universe.get_cells();
+    const cellsPtr = universe.get_cells_ptr();
     const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
 
     canvasContext.beginPath();
