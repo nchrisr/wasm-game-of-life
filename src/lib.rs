@@ -66,10 +66,11 @@ impl Universe {
         let width : u32 = 64;
         let height : u32 = 64;
 
+        let size = width * height;
+
         let cells = match initial_state {
             InitialState::Random => {
-
-                (0..width * height).map(|_i| {
+                (0..size).map(|_i| {
                     if Math::random() < 0.5{
                         Cell::Dead
                     }else{
@@ -79,7 +80,7 @@ impl Universe {
             },
 
             InitialState::SingleShip => {
-                let max_loc = (width * height) as f64;
+                let max_loc = size as f64;
                 let random_num = (Math::random() * max_loc).floor() as u32;
                 console::log_1(&format!("Random number = {}", random_num).into());
 
@@ -101,7 +102,7 @@ impl Universe {
                 // Use a HashSet for O(1) average time complexity lookups
                 let glider_set: HashSet<_> = glider_pattern.iter().cloned().collect();
 
-                (0..width * height).map(|i| {
+                (0..size).map(|i| {
                     let x = i % width;
                     let y = i /width;
 
@@ -114,7 +115,8 @@ impl Universe {
             },
 
             InitialState::ModTwoSeven => {
-                (0..width * height).map(|i| {
+
+                (0..size).map(|i| {
                     if i % 2 == 0 || i % 7 == 0{
                         Cell::Alive
                     }else {
@@ -184,6 +186,12 @@ impl Universe {
 
     pub fn render(&self) -> String {
         self.to_string()
+    }
+}
+
+impl Universe{
+    pub fn get_cells_(&self) -> &[Cell] {
+        &self.cells
     }
 }
 
