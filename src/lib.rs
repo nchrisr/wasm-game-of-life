@@ -12,6 +12,12 @@ use js_sys::Math;
 use std::collections::HashSet;
 use web_sys::console;
 
+macro_rules! log {
+    ( $ ( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    };
+}
+
 #[wasm_bindgen]
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -63,6 +69,9 @@ impl Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new(initial_state: InitialState) -> Universe{
+
+        utils::set_panic_hook();
+
         let width : u32 = 64;
         let height : u32 = 64;
 
