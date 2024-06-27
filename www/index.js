@@ -16,6 +16,8 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const canvasContext = canvas.getContext('2d');
 
+let animationId = null;
+
 const renderLoop = () => {
     debugger;
     universe.tick();
@@ -48,6 +50,10 @@ const drawGrid = () => {
 const getIndex = (row, column) => {
     return row * width + column;
 };
+
+const isPaused = () => {
+    return animationId === null;
+}
 
 const drawCells = () => {
     const cellsPtr = universe.get_cells_ptr();
