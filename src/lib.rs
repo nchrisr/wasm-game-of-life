@@ -13,6 +13,7 @@ use js_sys::Math;
 use std::collections::HashSet;
 use web_sys::console;
 
+#[macro_export]
 macro_rules! log {
     ( $ ( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
@@ -152,22 +153,6 @@ impl Universe {
         self.height
     }
 
-    /*
-    Set the width of the Universe, and reset all cells to dead state.
-    */
-    pub fn set_width(&mut self, width: u32) {
-        self.width = width;
-        self.cells = (0..width * self.height).map(|_i| Cell::Dead).collect();
-    }
-
-    /*
-    Set the height of the Universe, and reset all cells to the dead state.
-    */
-    pub fn set_height(&mut self, height: u32) {
-        self.height = height;
-        self.cells = (0..self.width * height).map(|_i| Cell::Dead).collect();
-    }
-
     pub fn get_cells_ptr(&self) -> *const Cell {
         self.cells.as_ptr()
     }
@@ -219,7 +204,24 @@ impl Universe{
             self.cells[idx] = Cell::Alive;
         }
     }
+
+    /*
+    Set the width of the Universe, and reset all cells to dead state.
+    */
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        self.cells = (0..width * self.height).map(|_i| Cell::Dead).collect();
+    }
+
+    /*
+    Set the height of the Universe, and reset all cells to the dead state.
+    */
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        self.cells = (0..self.width * height).map(|_i| Cell::Dead).collect();
+    }
 }
+
 
 impl fmt::Display for Universe{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
