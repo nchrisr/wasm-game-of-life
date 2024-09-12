@@ -12,6 +12,7 @@ const width = universe.get_width();
 
 const canvas = document.getElementById("game-of-life-canvas");
 const playPauseButton = document.getElementById("play-pause");
+const resetButton = document.getElementById("reset");
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 
@@ -41,6 +42,12 @@ playPauseButton.addEventListener("click", event => {
       pause();
     }
 });
+
+resetButton.addEventListener("click", event => {
+    pause();
+    universe.reset(InitialState.SingleShip)
+    play();
+})
 
 canvas.addEventListener("click", event => {
     const boundingRect = canvas.getBoundingClientRect();

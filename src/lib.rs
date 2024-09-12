@@ -75,6 +75,71 @@ impl Universe {
 
         count
     }
+
+    fn setup_cells(initial_state: InitialState, width: u32, height: u32) -> Vec<Cell> {
+
+        let size =  width * height;
+
+        let cells = match initial_state {
+            InitialState::Random => {
+                (0..size).map(|_i| {
+                    if Math::random() < 0.5{
+                        Cell::Dead
+                    }else{
+                        Cell::Alive
+                    }
+                }).collect()
+            },
+
+            InitialState::SingleShip => {
+                let max_loc = size as f64;
+                let random_num = (Math::random() * max_loc).floor() as u32;
+                console::log_1(&format!("Random number = {}", random_num).into());
+
+                // Calculate x and y position from random_num
+                let tip_x = random_num % width;
+                let tip_y = random_num / width;
+
+                console::log_1(&format!("Tip position: ({}, {})", tip_x, tip_y).into());
+
+                // Glider pattern
+                let glider_pattern = [
+                    (tip_x, tip_y),
+                    ((tip_x + 1) % width, (tip_y + 1) % height),
+                    ((tip_x + 2) % width, tip_y % height),
+                    ((tip_x + 2) % width, (tip_y + 1) % height),
+                    ((tip_x + 2) % width, (tip_y + 2) % height),
+                ];
+
+                // Use a HashSet for O(1) average time complexity lookups
+                let glider_set: HashSet<_> = glider_pattern.iter().cloned().collect();
+
+                (0..size).map(|i| {
+                    let x = i % width;
+                    let y = i /width;
+
+                    if glider_set.contains(&(x, y)){
+                        Cell::Alive
+                    }else{
+                        Cell::Dead
+                    }
+                }).collect()
+            },
+
+            InitialState::ModTwoSeven => {
+
+                (0..size).map(|i| {
+                    if i % 2 == 0 || i % 7 == 0{
+                        Cell::Alive
+                    }else {
+                        Cell::Dead
+                    }
+                }).collect()
+            }
+        };
+
+        cells
+    }
 }
 
 #[wasm_bindgen]
@@ -86,7 +151,9 @@ impl Universe {
         let width : u32 = 64;
         let height : u32 = 64;
 
-        let size = width * height;
+        let cells = Universe::setup_cells(initial_state, width, height);
+
+        /*let size = width * height;
 
         let cells = match initial_state {
             InitialState::Random => {
@@ -145,13 +212,18 @@ impl Universe {
                 }).collect()
             }
 
-        };
+        };*/
 
         Universe{
             width,
             height,
             cells,
         }
+    }
+
+    pub fn reset(&mut self, initial_state: InitialState) {
+        let new_cells = Universe::setup_cells(initial_state, self.width, self.height);
+        self.cells = new_cells;
     }
 
     pub fn toggle_cell(&mut self, row: u32, col: u32) {
