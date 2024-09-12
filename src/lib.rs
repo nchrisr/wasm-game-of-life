@@ -28,6 +28,15 @@ pub enum Cell {
     Alive = 1,
 }
 
+impl Cell {
+    fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Alive => Cell::Dead,
+            Cell::Dead => Cell::Alive,
+        };
+    }
+}
+
 #[wasm_bindgen]
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -145,6 +154,11 @@ impl Universe {
         }
     }
 
+    pub fn toggle_cell(&mut self, row: u32, col: u32) {
+        let cell_idx = self.get_index(row, col);
+        self.cells[cell_idx].toggle();
+    }
+    
     pub fn get_width(&self) -> u32 {
         self.width
     }
@@ -166,6 +180,14 @@ impl Universe {
                 let cell = self.cells[idx];
                 let live_neighbours = self.live_neighbour_count(row, col);
 
+                log!(
+                    "cell[{}, {}] is initially {:?} and has {} live neighbors",
+                    row,
+                    col,
+                    cell,
+                    live_neighbours
+                );
+
                 let next_cell = match (cell, live_neighbours) {
                     // Rule 1: Any live cell with fewer than two live neighbours dies (Underpopulation).
                     (Cell::Alive, x) if x < 2 => Cell::Dead,
@@ -178,6 +200,9 @@ impl Universe {
                     // All other cells remain in the same state.
                     (otherwise, _) => otherwise,
                 };
+
+                log!("    it becomes {:?}", next_cell);
+
 
                 next[idx] = next_cell;
             }
