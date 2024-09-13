@@ -128,4 +128,4 @@ const drawCells = () => {
 
 drawGrid();
 drawCells();
-play();//requestAnimationFrame(renderLoop);
+play();
